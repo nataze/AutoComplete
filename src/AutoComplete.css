@@ -1,0 +1,87 @@
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.autocomplete {
+  position: relative;
+  width: 300px;
+}
+
+.autocomplete-input {
+  width: 100%;
+  padding: 8px;
+  padding-right: 32px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.clear-btn {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+}
+
+.clear-btn:hover {
+  color: #666;
+}
+
+.autocomplete-list {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #ccc;
+  border-radius: 0 0 4px 4px;
+  background: #fff;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.autocomplete-list li {
+  padding: 8px;
+  cursor: pointer;
+  color: #333;
+}
+
+.autocomplete-list li.active,
+.autocomplete-list li:hover {
+  background-color: #e7e7f8;
+}
+
+.autocomplete-list li.loading,
+.autocomplete-list li.error,
+.autocomplete-list li.no-results {
+  cursor: default;
+  color: #666;
+}
+
+strong {
+  font-weight: 600;
+}
