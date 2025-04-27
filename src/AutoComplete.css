@@ -13,40 +13,146 @@
   color: white;
 }
 
+.autocomplete .input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
 .autocomplete {
   position: relative;
-  width: 300px;
 }
 
 .autocomplete-input {
-  width: 100%;
   padding: 8px;
   padding-right: 32px;
-  font-size: 16px;
+  font-size: calc(10px + 2vmin);
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 350px;
+}
+
+.autocomplete-input.has-icon-left {
+  padding-left: calc(1.5rem + 0.5rem + 8px);
+}
+
+.autocomplete-input.has-icon-right {
+  padding-right: calc(1.5rem + 0.5rem + 32px + 0.5rem);
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.5rem;
+  height: 1.5rem;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.input-icon.left {
+  right: 3rem;       
+  z-index: 1;
+  left: 0.5rem;
+}
+
+.input-icon.right {
+  right: 0.5rem;
+  margin-right: 2rem;
 }
 
 .clear-btn {
   position: absolute;
+  right: 0.5rem;
   top: 50%;
-  right: 8px;
   transform: translateY(-50%);
-  background: transparent;
+  background: none;
   border: none;
   padding: 0;
-  margin: 0;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #999;
+  z-index: 2;
+}
+
+.clear-btn-icon {
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 .clear-btn:hover {
   color: #666;
 }
+
+.option-content {
+  display: flex;
+  align-items: center;
+  align-content: center;
+}
+
+.option-content .label-left {
+  margin-left: 2rem;
+}
+
+.option-content .label-right {
+  margin-right: 2rem;
+}
+
+.option-content .label-left,
+.option-content .label-right {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 1;
+}
+
+.option-content .image-container {
+  max-width: 1.5rem;
+  max-height: 1.5rem;
+  width: 1.5rem; 
+  height: 1.5rem;
+  flex-shrink: 0;
+  object-fit: contain;
+  position: absolute;
+  margin-right: 0.5rem;
+}
+
+.option-content .label-text-right {
+  margin-right: 2rem;
+}
+
+.option-content .label-text-left {
+  margin-left: 2rem;
+}
+
+
+.option-content .image-container .icon,
+.option-content .image-container .image {
+  max-height:100%;
+  max-width:100%; 
+}
+
+.option-content img {
+  height: 100%;
+  max-width: 100%;
+  display: block;
+  margin: auto;
+}
+
+.option-content .image-container.right {
+  right: 0.5rem;
+}
+
+.option-content .image-container.left {
+  left: 0.5rem;
+}
+
 
 .autocomplete-list {
   position: absolute;
@@ -59,15 +165,21 @@
   border: 1px solid #ccc;
   border-radius: 0 0 4px 4px;
   background: #fff;
+  min-height: 50px;
   max-height: 200px;
   overflow-y: auto;
   z-index: 100;
+
+  display: block !important;
+  visibility: visible !important;
 }
 
 .autocomplete-list li {
   padding: 8px;
   cursor: pointer;
   color: #333;
+
+  display: flex;
 }
 
 .autocomplete-list li.active,
@@ -83,5 +195,5 @@
 }
 
 strong {
-  font-weight: 600;
+  font-weight: 700;
 }
