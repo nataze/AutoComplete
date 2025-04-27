@@ -86,7 +86,7 @@ export function AutoComplete<T>(props: AutoCompleteProps<T>) {
 
   useEffect(() => {
     clearAll()
-  }, [items, dataSourceUrl]);
+  }, [items, dataSourceUrl, clearAll]);
 
   const formatItems = useCallback(
     (raw: string[] | OptionItem<T>[]): OptionItem<T>[] =>
@@ -301,7 +301,7 @@ export function AutoComplete<T>(props: AutoCompleteProps<T>) {
           </li>
         );
       }),
-    [activeIndex, defaultRender, handleSelect, inputId, itemClassName, options, query, renderOption]
+    [activeIndex, defaultRender, handleSelect, inputId, itemClassName, options, renderOption]
   );
 
   return (

@@ -1,46 +1,121 @@
-# Getting Started with Create React App
+# AutoComplete Component
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A flexible, accessible, and high-performance React autocomplete input. It supports both static arrays and remote data sources, offers built-in caching and abortable fetches, debounced requests, customizable rendering, controlled or uncontrolled modes, and full keyboard & ARIA support.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## Features
 
-### `npm start`
+- **Static or Remote Data**  
+  Pass an `items` array or a `dataSourceUrl` for live fetching.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- **Debounce & Throttling**  
+  Control requester load with `debounceTime`, `minChars`, and `maxResults`.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- **Race-Safe Fetching**  
+  Uses `AbortController` to cancel stale requests and avoid out-of-order results.
 
-### `npm test`
+- **Unmount Cleanup**  
+  Clears timers and aborts in-flight fetches on unmount.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Controlled / Uncontrolled**  
+  Use `value` + `onInputChange` for controlled forms, or let it manage its own state.
 
-### `npm run build`
+- **Custom Rendering**  
+  - `renderOption(opt, isActive)` to override how each dropdown item renders.  
+  - `loadingComponent` / `noResultsComponent` to swap default messages.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- **Icon & Image Support**  
+  Show an emoji/SVG or image on the left or right of each item and the input, with ellipsis & tooltip.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- **Full Accessibility**  
+  WAI-ARIA combobox roles, `aria-activedescendant`, proper `<label>` associations.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+## Props (Performance & Behavior)
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```ts
+interface AutoCompleteProps<T> {
+  // Data sources
+  items?: Array<string | OptionItem<T>>;
+  dataSourceUrl?: string;
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+  // Controlled mode
+  value?: string;
+  onInputChange?: (value: string) => void;
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+  // Labels & placeholders
+  label?: string;
+  placeholder?: string;
+  iconPosition?: 'left' | 'right';
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+  // Debouncing & limits
+  debounceTime?: number;    // ms before firing filter/fetch
+  minChars?: number;        // minimum input length to query
+  maxResults?: number;      // maximum suggestions shown
 
-## Learn More
+  // Custom renderers
+  renderOption?: (opt: OptionItem<T>, isActive: boolean) => React.ReactNode;
+  loadingComponent?: React.ReactNode;
+  noResultsComponent?: React.ReactNode;
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+  // Callbacks
+  onSelect?: (opt: OptionItem<T>) => void;
+  onError?: (err: Error) => void;
+  onFocus?: React.FocusEventHandler<HTMLInputElement>;
+  onBlur?: React.FocusEventHandler<HTMLInputElement>;
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+  // Styling overrides
+  className?: string;
+  inputClassName?: string;
+  listClassName?: string;
+  itemClassName?: string;
+  clearButtonClassName?: string;
+
+  // ARIA: supply a unique id if needed
+  id?: string;
+}
+```
+
+## Getting Started
+
+This project uses Create React App:
+
+```bash
+npm install
+npm start
+```
+
+Open http://localhost:3000 in your browser.
+
+## Scenarios & `index.tsx`
+
+The demo in `index.tsx` lets you switch among five data scenarios—Fruits, Languages, Countries, Users, Teams—via the top nav:
+
+- Click a scenario button to swap the `items` prop or trigger a fetch.  
+- Toggle the switch to flip `iconPosition` between left and right.  
+- The Teams scenario uses a custom `renderOption` to show “Team — Division Division.”
+
+This showcases static lists, remote fetching, images/icons, and full custom rendering.
+
+Countries and Users use a public API to fetch data remotely.
+
+## Running Unit Tests
+We use Jest and React Testing Library:
+
+```bash
+npm test
+```
+Tests cover filtering, icon rendering, controlled vs. uncontrolled behavior, fetch loading & retry, keyboard navigation, and custom rendering—without external jest-dom matchers.
+
+
+## Best Practices & Interview Notes
+
+- Race-safe fetching with `AbortController`.  
+- Clean unmount clears timers & aborts any in-flight request.  
+- Fallbacks for error states and empty results keep the UI predictable.  
+- ARIA roles & proper labels ensure screen-reader compatibility.  
+- Extensible via `renderOption` and slot props for maximum reuse.  
+
+Feel free to clone, tweak props, or swap in new data sources
