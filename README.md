@@ -1,6 +1,6 @@
 # AutoComplete Component
 
-A flexible, accessible, and high-performance React autocomplete input. It supports both static arrays and remote data sources, offers built-in caching and abortable fetches, debounced requests, customizable rendering, controlled or uncontrolled modes, and full keyboard & ARIA support.
+A flexible, accessible, and high-performance React autocomplete input. It supports both static arrays and remote data sources, offers abortable fetches, debounced requests, customizable rendering, controlled or uncontrolled modes, and full keyboard & ARIA support.
 
 ---
 
