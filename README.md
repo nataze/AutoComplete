@@ -110,7 +110,7 @@ npm test
 Tests cover filtering, icon rendering, controlled vs. uncontrolled behavior, fetch loading & retry, keyboard navigation, and custom rendering—without external jest-dom matchers.
 
 
-## Best Practices & Interview Notes
+## Best Practices & Notes
 
 - Race-safe fetching with `AbortController`.  
 - Clean unmount clears timers & aborts any in-flight request.  

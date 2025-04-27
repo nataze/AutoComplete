@@ -12,6 +12,30 @@ code {
     monospace;
 }
 
+.scenario-group {
+  display: flex;
+  align-items: center;
+  margin-right: 2rem;
+}
+
+.scenario-group .group-label {
+  margin-right: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #666;
+  white-space: nowrap;
+}
+
+.scenario-group:not(:last-child)::after {
+  content: '';
+  display: inline-block;
+  width: 1px;
+  height: 24px;
+  background-color: #ddd;
+  margin-left: 2rem;
+}
+
 .scenario-nav {
   position: fixed;
   top: 0;
