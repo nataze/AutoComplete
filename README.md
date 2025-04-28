@@ -37,9 +37,11 @@ A flexible, accessible, and high-performance React autocomplete input. It suppor
 
 ```ts
 interface AutoCompleteProps<T> {
-  // Data sources
-  items?: Array<string | OptionItem<T>>;
-  dataSourceUrl?: string;
+  // Data source
+  items: Array<string | OptionItem<T>>;
+
+  // Custom function to format options
+  formatOptions?: (options: any[]) => OptionItem<T>[]
 
   // Controlled mode
   value?: string;
@@ -62,7 +64,6 @@ interface AutoCompleteProps<T> {
 
   // Callbacks
   onSelect?: (opt: OptionItem<T>) => void;
-  onError?: (err: Error) => void;
   onFocus?: React.FocusEventHandler<HTMLInputElement>;
   onBlur?: React.FocusEventHandler<HTMLInputElement>;
 

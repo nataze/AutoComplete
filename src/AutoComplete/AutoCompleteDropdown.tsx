@@ -4,10 +4,6 @@ export function AutoCompleteDropdown<T>(props: AutoCompleteDropdownProps<T>) {
   const {
     loading,
     loadingComponent,
-    error,
-    query,
-    fetchOptions,
-    hasFetched,
     options,
     noResultsComponent,
     activeIndex,
@@ -15,6 +11,7 @@ export function AutoCompleteDropdown<T>(props: AutoCompleteDropdownProps<T>) {
     handleSelect,
     inputId,
     itemClassName,
+    hasSearched
   } = props
 
   if (loading) {
@@ -25,23 +22,12 @@ export function AutoCompleteDropdown<T>(props: AutoCompleteDropdownProps<T>) {
     )
   }
 
-  if (error) {
-    return (
-      <li className="error">
-        Error: {error}{' '}
-        <button onClick={() => fetchOptions(query)}>
-          Retry
-        </button>
-      </li>
-    )
-  }
-
-  if (!loading && !error && hasFetched && options.length === 0 ) {
+  if (options.length === 0 && hasSearched) {
     return (
       <li className="no-results">
         {noResultsComponent || 'No results'}
       </li>
-    )
+    );
   }
 
   return (

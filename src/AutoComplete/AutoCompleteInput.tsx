@@ -21,7 +21,7 @@ export function AutoCompleteInput<T>(props: AutoCompleteInputProps<T>) {
     clearButtonClassName,
     clearAll,
   } = props
-  
+
   return (
     <div className="input-wrapper">
       {selectedOption && iconPosition === 'left' && (
@@ -39,7 +39,7 @@ export function AutoCompleteInput<T>(props: AutoCompleteInputProps<T>) {
       <input
         id={inputId}
         className={`autocomplete-input ${inputClassName} ${
-          selectedOption ? `has-icon-${iconPosition}` : ''
+          selectedOption && selectedOption.icon ? `has-icon-${iconPosition}` : ''
         }`}
         placeholder={placeholder}
         role="combobox"

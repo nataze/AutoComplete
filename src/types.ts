@@ -14,7 +14,7 @@ export interface OptionItem<T = any> {
  */
 export interface AutoCompleteProps<T> {
   // Static list of items. If omitted, fetch from dataSourceUrl
-  items?: string[] | OptionItem<T>[];
+  items: string[] | OptionItem<T>[];
 
   // Unique input id for accessibility. Generated if not provided
   id?: string;
@@ -40,9 +40,6 @@ export interface AutoCompleteProps<T> {
   // Max number of results to display
   maxResults?: number;
 
-  // URL to fetch suggestions when items is undefined
-  dataSourceUrl?: string;
-
   // CSS class for root container
   className?: string;
 
@@ -64,6 +61,9 @@ export interface AutoCompleteProps<T> {
     isActive: boolean
   ) => React.ReactNode;
 
+  // Custom function to format options
+  formatOptions?: (options: any[]) => OptionItem<T>[]
+
   // Custom loading indicator node
   loadingComponent?: React.ReactNode;
 
@@ -75,9 +75,6 @@ export interface AutoCompleteProps<T> {
 
   // Callback when an option is selected
   onSelect?: (opt: OptionItem<T>) => void;
-
-  // Callback on fetch/render errors
-  onError?: (err: Error) => void;
 
   // Called when input gains focus
   onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
@@ -115,10 +112,6 @@ export interface AutoCompleteInputProps<T> {
 export interface AutoCompleteDropdownProps<T> {
   loading: boolean;
   loadingComponent?: React.ReactNode;
-  error: string | null;
-  query: string;
-  fetchOptions: (query: string) => Promise<void>;
-  hasFetched: boolean;
   options: OptionItem<T>[];
   noResultsComponent?: React.ReactNode;
   renderOption: (opt: OptionItem<T>, isActive: boolean) => React.ReactNode;
@@ -126,6 +119,7 @@ export interface AutoCompleteDropdownProps<T> {
   handleSelect: (opt: OptionItem<T>) => void;
   inputId?: string;
   itemClassName?: string;
+  hasSearched: boolean;
 }
 
 export interface ScenarioDef<T> {
@@ -133,6 +127,7 @@ export interface ScenarioDef<T> {
   name: string;
   placeholder: string;
   items?: string[] | OptionItem<T>[];
+  dataSourceUrl?: string;
   fetcher?: () => Promise<OptionItem<T>[]>;
   renderOption?: (opt: OptionItem<T>, isActive: boolean) => React.ReactNode;
 }

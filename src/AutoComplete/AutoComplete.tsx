@@ -26,7 +26,6 @@ export function AutoComplete<T>(props: AutoCompleteProps<T>) {
     debounceTime = 300,
     minChars = 1,
     maxResults = 10,
-    dataSourceUrl = '',
 
     className = '',
     inputClassName = '',
@@ -35,17 +34,18 @@ export function AutoComplete<T>(props: AutoCompleteProps<T>) {
     clearButtonClassName = '',
     
     renderOption,
+    formatOptions,
     loadingComponent,
     noResultsComponent,
 
     iconPosition = 'left',
 
     onSelect,
-    onError,
     onFocus,
     onBlur,
   } = props;
 
+  // ids for accessibility
   const generatedId = useId();
   const inputId = id ?? `autocomplete-${generatedId}`;
   const listId = `${inputId}-list`;
@@ -55,11 +55,10 @@ export function AutoComplete<T>(props: AutoCompleteProps<T>) {
 
   const [options, setOptions] = useState<OptionItem<T>[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [hasSearched, setHasSearched] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const [selectedOption, setSelectedOption] = useState<OptionItem<T> | null>(null);
   const [open, setOpen] = useState(false);
-  const [hasFetched, setHasFetched] = useState(false);
 
   const timer = useRef<number>(undefined);
   const abortRef = useRef<AbortController>(undefined);
@@ -74,20 +73,19 @@ export function AutoComplete<T>(props: AutoCompleteProps<T>) {
 
   const clearAll = useCallback(() => {
     clearTimeout(timer.current);
-    abortRef.current?.abort();
     setLoading(false);
-    setError(null);
     setOptions([]);
     setActiveIndex(-1);
     setOpen(false);
-    setHasFetched(false);
     setSelectedOption(null);
+    setHasSearched(false);
     if (value === undefined) setInternalQuery('');
+    onInputChange?.('')
   }, [value]);
 
   useEffect(() => {
     clearAll()
-  }, [items, dataSourceUrl, clearAll]);
+  }, [items, clearAll]);
 
   const formatItems = useCallback(
     (raw: string[] | OptionItem<T>[]): OptionItem<T>[] =>
@@ -111,60 +109,22 @@ export function AutoComplete<T>(props: AutoCompleteProps<T>) {
 
   const fetchOptions = useCallback(
     async (q: string) => {
-      setHasFetched(false);
       if (q.length < minChars) {
         setOptions([]);
-        setHasFetched(true);
-        return;
-      }
-      setLoading(true);
-      setError(null);
-      abortRef.current?.abort();
-      const controller = new AbortController();
-      abortRef.current = controller;
-
-      // Static List
-      if (items) {
-        try {
-          const list = formatItems(items);
-          setOptions(filterList(list, q));
-        } catch (e: any) {
-          setError(e.message);
-          onError?.(e);
-        } finally {
-          setLoading(false);
-          setHasFetched(true);
-        }
         return;
       }
 
-      // Remote List
       try {
-        const res = await fetch(
-          `${dataSourceUrl}?q=${encodeURIComponent(q)}`,
-          { signal: controller.signal }
-        );
-
-        if (!res.ok) {
-          console.error(`Error ${res.status}`);
-          return
-        }
-
-        const data: string[] | OptionItem<T>[] = await res.json();
-        const list = formatItems(data as any);
-        
+        const list = formatOptions ? formatOptions(items) : formatItems(items);
         setOptions(filterList(list, q));
-      } catch (err: any) {
-        if (err.name !== 'AbortError') {
-          setError(err.message || 'Error fetching');
-          onError?.(err);
-        }
+      } catch (e: any) {
+        setOptions([]);
+        console.error(e)
       } finally {
         setLoading(false);
-        setHasFetched(true);
       }
     },
-    [items, dataSourceUrl, formatItems, filterList, minChars, onError]
+    [items, formatItems, formatOptions, filterList, minChars]
   );
 
   const moveActive = useCallback(
@@ -189,13 +149,28 @@ export function AutoComplete<T>(props: AutoCompleteProps<T>) {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const val = e.target.value;
       if (value === undefined) setInternalQuery(val);
+
       onInputChange?.(val);
       setSelectedOption(null);
       setOpen(!!val);
       setActiveIndex(-1);
+
+      if (val.length < minChars) {
+        setHasSearched(false);
+      } else {
+        setLoading(true)
+      }
+
       clearTimeout(timer.current);
       timer.current = window.setTimeout(
-        () => fetchOptions(val),
+        () => {
+          if (val.length >= minChars) {
+            setHasSearched(true);
+            fetchOptions(val);
+          } else {
+            setOptions([]);
+          }
+        },
         debounceTime
       );
     },
@@ -314,16 +289,13 @@ export function AutoComplete<T>(props: AutoCompleteProps<T>) {
                 inputId={inputId}
                 loading={loading}
                 loadingComponent={loadingComponent}
-                error={error}
-                query={query}
-                fetchOptions={fetchOptions}
-                hasFetched={hasFetched}
                 options={options}
                 noResultsComponent={noResultsComponent}
                 activeIndex={activeIndex}
                 renderOption={renderOption ?? defaultRender}
                 handleSelect={handleSelect}
                 itemClassName={itemClassName}
+                hasSearched={hasSearched} 
               />
             </ul>
           )}

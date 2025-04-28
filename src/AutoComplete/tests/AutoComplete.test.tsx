@@ -65,61 +65,6 @@ describe('AutoComplete (static items)', () => {
   });
 });
 
-describe('AutoComplete (remote fetch)', () => {
-  test('loading state shows Loading... and no error', async () => {
-    jest.spyOn(global, 'fetch').mockImplementation(() => new Promise(() => {}));
-
-    render(
-      <AutoComplete
-        items={undefined}
-        dataSourceUrl="/fake"
-        debounceTime={0}
-      />
-    );
-    userEvent.type(screen.getByRole('combobox'), 'x');
-
-    const loading = await screen.findByText('Loading...');
-    expect(loading).not.toBeNull();
-    expect(screen.queryByText(/^Error/)).toBeNull();
-  });
-
-  test('shows fetch results with icons', async () => {
-    const mockData = [
-      { label: 'Dog', value: 'dog', icon: '🐶' },
-      { label: 'Cat', value: 'cat', icon: '🐱' },
-    ];
-    jest.spyOn(global, 'fetch').mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockData),
-    } as any);
-
-    render(
-      <AutoComplete
-        items={undefined}
-        dataSourceUrl="/fake"
-        debounceTime={0}
-      />
-    );
-    userEvent.type(screen.getByRole('combobox'), 'd');
-
-    const dog = await screen.findByTitle('Dog');
-    expect(dog).not.toBeNull();
-    expect(screen.queryByTitle('Cat')).toBeNull();
-
-    const dogIcon = screen.getByText('🐶');
-    expect(dogIcon).not.toBeNull();
-
-    userEvent.clear(screen.getByRole('combobox'));
-    userEvent.type(screen.getByRole('combobox'), 'c');
-
-    const cat = await screen.findByTitle('Cat');
-    expect(cat).not.toBeNull();
-    expect(screen.queryByTitle('Dog')).toBeNull();
-
-    const catIcon = screen.getByText('🐱');
-    expect(catIcon).not.toBeNull();
-  });
-});
 
 describe('AutoComplete with custom renderOption', () => {
   const items: OptionItem<string>[] = [

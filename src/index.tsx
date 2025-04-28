@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import { AutoComplete } from './AutoComplete/AutoComplete';
@@ -6,8 +6,6 @@ import { OptionItem, ScenarioDef, ScenarioKey } from './types';
 import { fruitList, labels, languageList, teamList } from './data';
 import { useScenario } from './hooks/useScenario';
 
-const STATIC_SCENARIOS: ScenarioKey[] = ['fruits', 'languages', 'teams'];
-const REMOTE_SCENARIOS: ScenarioKey[] = ['countries', 'users'];
 
 export const SCENARIOS: ScenarioDef<any>[] = [
   {
