@@ -3,14 +3,15 @@ import React, {
   useRef,
   useEffect,
   useCallback,
-  useMemo,
   KeyboardEvent,
   FocusEvent,
   useId,
 } from 'react';
 import './AutoComplete.css';
-import { ReactComponent as CloseIcon } from './CloseIcon.svg';
-import { AutoCompleteProps, OptionItem } from './types';
+
+import { AutoCompleteProps, OptionItem } from '../types';
+import { AutoCompleteInput } from './AutoCompleteInput';
+import { AutoCompleteDropdown } from './AutoCompleteDropdown';
 
 export function AutoComplete<T>(props: AutoCompleteProps<T>) {
   const {
@@ -25,7 +26,7 @@ export function AutoComplete<T>(props: AutoCompleteProps<T>) {
     debounceTime = 300,
     minChars = 1,
     maxResults = 10,
-    dataSourceUrl = '/data/suggestions.json',
+    dataSourceUrl = '',
 
     className = '',
     inputClassName = '',
@@ -141,9 +142,15 @@ export function AutoComplete<T>(props: AutoCompleteProps<T>) {
           `${dataSourceUrl}?q=${encodeURIComponent(q)}`,
           { signal: controller.signal }
         );
-        if (!res.ok) throw new Error(`Error ${res.status}`);
+
+        if (!res.ok) {
+          console.error(`Error ${res.status}`);
+          return
+        }
+
         const data: string[] | OptionItem<T>[] = await res.json();
         const list = formatItems(data as any);
+        
         setOptions(filterList(list, q));
       } catch (err: any) {
         if (err.name !== 'AbortError') {
@@ -273,123 +280,49 @@ export function AutoComplete<T>(props: AutoCompleteProps<T>) {
     [onBlur]
   );
 
-  const optionElements = useMemo(
-    () =>
-      options.map((opt, idx) => {
-        const isActive = idx === activeIndex;
-
-        const content = renderOption
-          ? renderOption(opt, isActive)
-          : defaultRender(opt, isActive);
-
-
-        const key =
-          typeof opt.value === 'string'
-            ? `${opt.value}-${idx}`
-            : `${JSON.stringify(opt.value)}-${idx}`;
-
-        return (
-          <li
-            key={key}
-            id={`${inputId}-item-${idx}`}
-            role="option"
-            aria-selected={isActive}
-            className={isActive ? `active ${itemClassName}` : itemClassName}
-            onMouseDown={() => handleSelect(opt)}
-          >
-            {content}
-          </li>
-        );
-      }),
-    [activeIndex, defaultRender, handleSelect, inputId, itemClassName, options, renderOption]
-  );
-
   return (
     <div className={`App ${className}`}>  
       <header className="App-header">
         <label htmlFor={inputId}>{label}</label>
         <div className="autocomplete">
-          <div className="input-wrapper">
-            {selectedOption && iconPosition === 'left' && (
-              <span className="input-icon icon left">
-                {selectedOption.icon}
-              </span>
-            )}
-            {selectedOption?.imageUrl && iconPosition === 'left' && (
-              <img
-                src={selectedOption.imageUrl}
-                alt=""
-                className="input-icon image left"
-              />
-            )}
-            <input
-              id={inputId}
-              className={`autocomplete-input ${inputClassName} ${
-                selectedOption ? `has-icon-${iconPosition}` : ''
-              }`}
-              placeholder={placeholder}
-              role="combobox"
-              aria-haspopup="listbox"
-              aria-controls={listId}
-              aria-expanded={open}
-              aria-activedescendant={
-                activeIndex >= 0 ? `${inputId}-item-${activeIndex}` : undefined
-              }
-              value={query}
-              onChange={handleInputChange}
-              onKeyDown={handleKeyDown}
-              onFocus={onFocusInternal}
-              onBlur={onBlurInternal}
-              autoComplete="off"
-            />
-            {query && (
-              <button
-                type="button"
-                className={`clear-btn ${clearButtonClassName}`}
-                onClick={clearAll}
-                aria-label="Clear search"
-              >
-                <CloseIcon className="clear-btn-icon" />
-              </button>
-            )}
-            {selectedOption && iconPosition === 'right' && (
-              <span className="input-icon icon right">
-                {selectedOption.icon}
-              </span>
-            )}
-            {selectedOption?.imageUrl && iconPosition === 'right' && (
-              <img
-                src={selectedOption.imageUrl}
-                alt=""
-                className="input-icon image right"
-              />
-            )}
-          </div>
+          <AutoCompleteInput
+            open={open}
+            selectedOption={selectedOption}
+            iconPosition={iconPosition}
+            inputId={inputId}
+            inputClassName={inputClassName}
+            placeholder={placeholder}
+            listId={listId}
+            activeIndex={activeIndex}
+            query={query}
+            handleInputChange={handleInputChange}
+            handleKeyDown={handleKeyDown}
+            onFocusInternal={onFocusInternal}
+            onBlurInternal={onBlurInternal}
+            clearAll={clearAll}
+            clearButtonClassName={clearButtonClassName}
+          />
           {open && (
             <ul
               id={listId}
               role="listbox"
               className={`autocomplete-list ${listClassName}`}
             >
-              {loading && (
-                <li className="loading">
-                  {loadingComponent || 'Loading...'}
-                </li>
-              )}
-              {error && (
-                <li className="error">
-                  Error: {error}{' '}
-                  <button onClick={() => fetchOptions(query)}>
-                    Retry
-                  </button>
-                </li>
-              )}
-              {!loading && !error && hasFetched && options.length === 0 && (
-                <li className="no-results">
-                  {noResultsComponent || 'No results'}
-                </li>
-              )}
-              {optionElements}
+              <AutoCompleteDropdown
+                inputId={inputId}
+                loading={loading}
+                loadingComponent={loadingComponent}
+                error={error}
+                query={query}
+                fetchOptions={fetchOptions}
+                hasFetched={hasFetched}
+                options={options}
+                noResultsComponent={noResultsComponent}
+                activeIndex={activeIndex}
+                renderOption={renderOption ?? defaultRender}
+                handleSelect={handleSelect}
+                itemClassName={itemClassName}
+              />
             </ul>
           )}
         </div>

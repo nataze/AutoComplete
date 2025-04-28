@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import reportWebVitals from './reportWebVitals';
-import { AutoComplete } from './components/AutoComplete/AutoComplete';
+import { AutoComplete } from './AutoComplete/AutoComplete';
 import { OptionItem, ScenarioKey } from './types';
 import { fruitList, labels, languageList, SCENARIOS, teamList } from './data';
 
@@ -129,4 +128,3 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(<App />);
-reportWebVitals();

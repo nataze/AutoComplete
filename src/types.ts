@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, FocusEvent, KeyboardEvent } from "react";
 
 export interface OptionItem<T = any> {
   label: string;
@@ -91,4 +91,39 @@ export type ScenarioKey = 'fruits' | 'languages' | 'countries' | 'users' | 'team
 export interface Scenario {
   id: ScenarioKey;
   name: string;
+}
+
+
+export interface AutoCompleteInputProps<T> {
+  open: boolean;
+  selectedOption: OptionItem<T> | null;
+  iconPosition: 'left' | 'right';
+  inputId?: string;
+  inputClassName?: string;
+  placeholder?: string;
+  listId?: string;
+  activeIndex: number;
+  query: string;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
+  onFocusInternal: (e: FocusEvent<HTMLInputElement>) => void;
+  onBlurInternal: (e: FocusEvent<HTMLInputElement>) => void;
+  clearButtonClassName?: string;
+  clearAll: () => void;
+}
+
+export interface AutoCompleteDropdownProps<T> {
+  loading: boolean;
+  loadingComponent?: React.ReactNode;
+  error: string | null;
+  query: string;
+  fetchOptions: (query: string) => Promise<void>;
+  hasFetched: boolean;
+  options: OptionItem<T>[];
+  noResultsComponent?: React.ReactNode;
+  renderOption: (opt: OptionItem<T>, isActive: boolean) => React.ReactNode;
+  activeIndex: number;
+  handleSelect: (opt: OptionItem<T>) => void;
+  inputId?: string;
+  itemClassName?: string;
 }

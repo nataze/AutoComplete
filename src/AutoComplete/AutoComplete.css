@@ -8,9 +8,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  padding-top: 25vh;
   font-size: calc(10px + 2vmin);
   color: white;
+}
+
+.App-header label {
+  margin-bottom: 1rem;
 }
 
 .autocomplete .input-wrapper {
@@ -51,9 +55,9 @@
 .input-icon {
   position: absolute;
   top: 50%;
-  transform: translateY(-50%);
-  width: 1.5rem;
-  height: 1.5rem;
+  transform: translateY(-55%);
+  max-width: 1.5rem;
+  max-height: 1.5rem;
   object-fit: contain;
   pointer-events: none;
 }
@@ -166,7 +170,7 @@
   border-radius: 0 0 4px 4px;
   background: #fff;
   min-height: 50px;
-  max-height: 200px;
+  max-height: 400px;
   overflow-y: auto;
   z-index: 100;
 

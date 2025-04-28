@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { AutoComplete } from './AutoComplete';
-import { OptionItem } from './types';
+import { OptionItem } from '../../types';
+import { AutoComplete } from '../AutoComplete';
 
-jest.mock('./CloseIcon.svg', () => ({
+jest.mock('../CloseIcon.svg', () => ({
   ReactComponent: () => <span data-testid="close-icon">x</span>,
 }));
 
