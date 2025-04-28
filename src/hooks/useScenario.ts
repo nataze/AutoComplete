@@ -3,37 +3,37 @@ import { ScenarioKey } from "../types";
 import { SCENARIOS } from "..";
 
 export function useScenario<T>(scenarioId: ScenarioKey) {
-  const scenarioDefinition = useMemo(
+  const scenario = useMemo(
     () => SCENARIOS.find(s => s.id === scenarioId)!,
     [scenarioId]
   );
-  const [items, setItems] = useState(scenarioDefinition.items ?? []);
-  const [loading, setLoading] = useState(!scenarioDefinition.items);
+  const [items, setItems] = useState(scenario.items ?? []);
+  const [loading, setLoading] = useState(!scenario.items);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (scenarioDefinition.items) {
-      setItems(scenarioDefinition.items);
+    if (scenario.items) {
+      setItems(scenario.items);
       setLoading(false);
       setError(null);
       return;
     }
     setLoading(true);
     setError(null);
-    scenarioDefinition.fetcher!()
+    scenario.fetcher!()
       .then(list => setItems(list))
       .catch(err => {
         console.error(err);
         setError(err.message);
       })
       .finally(() => setLoading(false));
-  }, [scenarioDefinition]);
+  }, [scenario]);
 
   return {
     items,
     loading,
     error,
-    placeholder: scenarioDefinition.placeholder,
-    renderOption: scenarioDefinition.renderOption,
+    placeholder: scenario.placeholder,
+    renderOption: scenario.renderOption,
   };
 }
