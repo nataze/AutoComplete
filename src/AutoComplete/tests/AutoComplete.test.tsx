@@ -163,11 +163,11 @@ describe('AutoComplete with custom renderOption', () => {
     userEvent.type(input, 'a');
 
     let nodes = await screen.findAllByTestId('custom');
-    expect(nodes.every(n => n.textContent!.endsWith(':INACTIVE'))).toBe(true);
+    expect(nodes.every(n => n.textContent?.endsWith(':INACTIVE'))).toBe(true);
 
     userEvent.keyboard('{ArrowDown}');
     nodes = await screen.findAllByTestId('custom');
     expect(nodes[0].textContent).toBe('Alpha:ACTIVE');
-    expect(nodes.slice(1).every(n => n.textContent!.endsWith(':INACTIVE'))).toBe(true);
+    expect(nodes.slice(1).every(n => n.textContent?.endsWith(':INACTIVE'))).toBe(true);
   });
 });

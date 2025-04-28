@@ -1,13 +1,5 @@
-import { OptionItem, Scenario } from "./types";
+import { OptionItem, Scenario, ScenarioDef } from "./types";
 
-
-export const SCENARIOS: Scenario[] = [
-  { id: 'fruits',    name: 'Fruits' },
-  { id: 'languages', name: 'Languages' },
-  { id: 'countries', name: 'Countries' },
-  { id: 'users',     name: 'Users' },
-  { id: 'teams',     name: 'Teams' },
-];
 
 export const labels = {
   fruits: 'Fruits',

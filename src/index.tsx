@@ -1,65 +1,39 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import { AutoComplete } from './AutoComplete/AutoComplete';
-import { OptionItem, ScenarioKey } from './types';
-import { fruitList, labels, languageList, SCENARIOS, teamList } from './data';
+import { OptionItem, ScenarioDef, ScenarioKey } from './types';
+import { fruitList, labels, languageList, teamList } from './data';
+import { useScenario } from './hooks/useScenario';
 
 const STATIC_SCENARIOS: ScenarioKey[] = ['fruits', 'languages', 'teams'];
 const REMOTE_SCENARIOS: ScenarioKey[] = ['countries', 'users'];
 
-function App() {
-  const [scenario, setScenario] = useState<ScenarioKey>('fruits');
-  const [items, setItems] = useState<string[] | OptionItem<any>[]>(fruitList);
-  const [placeholder, setPlaceholder] = useState('Search fruits…');
-  const [iconPosition, setIconPosition] = useState<'left' | 'right'>('left');
-
-  useEffect(() => {
-    setItems([]);
-    switch (scenario) {
-      case 'fruits':
-        setItems(fruitList);
-        setPlaceholder('Search…');
-        break;
-      case 'languages':
-        setItems(languageList);
-        setPlaceholder('Search…');
-        break;
-      case 'countries':
-        setPlaceholder('Search…');
-        fetch('https://restcountries.com/v3.1/all')
-          .then(res => res.json())
-          .then((data: any[]) =>
-            setItems(data.map(c => ({
-              label: c.name.common,
-              value: c.cca2,
-              imageUrl: c.flags.png,
-            })))
-          )
-          .catch(console.error);
-        break;
-      case 'users':
-        setPlaceholder('Search…');
-        fetch('https://dummyjson.com/users')
-          .then(res => res.json())
-          .then((data: any) =>
-            setItems(data.users.map((u: any) => ({
-              label: `${u.firstName} ${u.lastName}`,
-              value: u.id,
-              imageUrl: u.image,
-            })))
-          )
-          .catch(console.error);
-        break;
-      case 'teams':
-        setItems(teamList);
-        setPlaceholder('Search…');
-        break;
-    }
-  }, [scenario]);
-
-  const RenderTeamOption = useCallback(
-    (opt: OptionItem<any>, isActive: boolean) => (
+export const SCENARIOS: ScenarioDef<any>[] = [
+  {
+    id: 'fruits',
+    name: 'Fruits',
+    placeholder: 'Search fruits…',
+    items: fruitList,
+  },
+  {
+    id: 'languages',
+    name: 'Languages',
+    placeholder: 'Search languages…',
+    items: languageList,
+  },
+  {
+    id: 'teams',
+    name: 'Teams',
+    placeholder: 'Search teams…',
+    items: teamList,
+    renderOption: (
+      opt: OptionItem<{
+        label: string;
+        division: string;
+      }>,
+      isActive: boolean
+    ) => (
       <div
         style={{ fontWeight: isActive ? 'bold' : 'normal' }}
         className="label-right"
@@ -68,42 +42,100 @@ function App() {
         {opt.label} — <small>{opt.division} Division</small>
       </div>
     ),
+  },
+  {
+    id: 'countries',
+    name: 'Countries',
+    placeholder: 'Search countries…',
+    fetcher: async () => {
+      const res = await fetch('https://restcountries.com/v3.1/all');
+      // no proper error handling for sample requests
+      if (!res.ok) console.error(`Error ${res.status}`);
+      const data = await res.json();
+      return data.map((c: any) => ({
+        label: c.name.common,
+        value: c.cca2,
+        imageUrl: c.flags.png,
+      }));
+    },
+  },
+  {
+    id: 'users',
+    name: 'Users',
+    placeholder: 'Search users…',
+    fetcher: async () => {
+      const res = await fetch('https://dummyjson.com/users');
+      if (!res.ok) console.error(`Error ${res.status}`);
+      const { users } = await res.json();
+      return users.map((u: any) => ({
+        label: `${u.firstName} ${u.lastName}`,
+        value: u.id,
+        imageUrl: u.image,
+      }));
+    },
+  },
+];
+
+function App() {
+  const [scenario, setScenario] = useState<ScenarioKey>('fruits');
+  const [iconPosition, setIconPosition] = useState<'left' | 'right'>('left');
+
+  // get items + metadata
+  const { items, loading, error, placeholder, renderOption } = useScenario(scenario);
+
+  // split into groups
+  const staticScenarios = useMemo(
+    () => SCENARIOS.filter(s => !!s.items),
     []
   );
+  const remoteScenarios = useMemo(
+    () => SCENARIOS.filter(s => !!s.fetcher),
+    []
+  );
+
+  const handleToggleIcon = useCallback(() => {
+    setIconPosition(pos => (pos === 'left' ? 'right' : 'left'));
+  }, []);
 
   return (
     <div className="app-container">
       <nav className="scenario-nav">
         <div className="scenario-group">
           <span className="group-label">Static Lists</span>
-          {SCENARIOS.filter(s => STATIC_SCENARIOS.includes(s.id as ScenarioKey)).map(s => (
-            <button
-              key={s.id}
-              className={`scenario-btn ${scenario === s.id ? 'active' : ''}`}
-              onClick={() => setScenario(s.id as ScenarioKey)}
-            >
-              {s.name}
-            </button>
-          ))}
+          <div className="group-buttons">
+            {staticScenarios.map(s => (
+              <button
+                key={s.id}
+                className={`scenario-btn ${scenario === s.id ? 'active' : ''}`}
+                onClick={() => setScenario(s.id)}
+              >
+                {s.name}
+              </button>
+            ))}
+          </div>
         </div>
+
         <div className="scenario-group">
           <span className="group-label">Remote Fetch</span>
-          {SCENARIOS.filter(s => REMOTE_SCENARIOS.includes(s.id as ScenarioKey)).map(s => (
-            <button
-              key={s.id}
-              className={`scenario-btn ${scenario === s.id ? 'active' : ''}`}
-              onClick={() => setScenario(s.id as ScenarioKey)}
-            >
-              {s.name}
-            </button>
-          ))}
+          <div className="group-buttons">
+            {remoteScenarios.map(s => (
+              <button
+                key={s.id}
+                className={`scenario-btn ${scenario === s.id ? 'active' : ''}`}
+                onClick={() => setScenario(s.id)}
+              >
+                {s.name}
+              </button>
+            ))}
+          </div>
         </div>
+
         <div className="icon-toggle">
           <button
             role="switch"
             aria-checked={iconPosition === 'right'}
             className={`toggle-switch ${iconPosition}`}
-            onClick={() => setIconPosition(pos => (pos === 'left' ? 'right' : 'left'))}
+            onClick={handleToggleIcon}
           >
             <span className="switch-thumb" />
           </button>
@@ -113,11 +145,12 @@ function App() {
         </div>
       </nav>
 
+      {error && <div className="scenario-error">Error loading items: {error}</div>}
+
       <AutoComplete
-        items={items}
-        label={labels[scenario]}
+        items={loading ? [] : items}
         placeholder={placeholder}
-        renderOption={scenario === 'teams' ? RenderTeamOption : undefined}
+        renderOption={renderOption}
         iconPosition={iconPosition}
       />
     </div>

@@ -127,3 +127,12 @@ export interface AutoCompleteDropdownProps<T> {
   inputId?: string;
   itemClassName?: string;
 }
+
+export interface ScenarioDef<T> {
+  id: ScenarioKey;
+  name: string;
+  placeholder: string;
+  items?: string[] | OptionItem<T>[];
+  fetcher?: () => Promise<OptionItem<T>[]>;
+  renderOption?: (opt: OptionItem<T>, isActive: boolean) => React.ReactNode;
+}

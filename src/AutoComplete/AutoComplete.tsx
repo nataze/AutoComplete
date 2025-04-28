@@ -123,6 +123,7 @@ export function AutoComplete<T>(props: AutoCompleteProps<T>) {
       const controller = new AbortController();
       abortRef.current = controller;
 
+      // Static List
       if (items) {
         try {
           const list = formatItems(items);
@@ -137,6 +138,7 @@ export function AutoComplete<T>(props: AutoCompleteProps<T>) {
         return;
       }
 
+      // Remote List
       try {
         const res = await fetch(
           `${dataSourceUrl}?q=${encodeURIComponent(q)}`,

@@ -21,6 +21,7 @@ export function AutoCompleteInput<T>(props: AutoCompleteInputProps<T>) {
     clearButtonClassName,
     clearAll,
   } = props
+  
   return (
     <div className="input-wrapper">
       {selectedOption && iconPosition === 'left' && (
