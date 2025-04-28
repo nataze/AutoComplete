@@ -149,6 +149,7 @@ function App() {
 
       <AutoComplete
         items={loading ? [] : items}
+        label={labels[scenario]}
         placeholder={placeholder}
         renderOption={renderOption}
         iconPosition={iconPosition}
