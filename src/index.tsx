@@ -97,6 +97,7 @@ function App() {
 
   return (
     <div className="app-container">
+      {/* Nav is not mobile friendly since it wasn't core part of component */}
       <nav className="scenario-nav">
         <div className="scenario-group">
           <span className="group-label">Static Lists</span>

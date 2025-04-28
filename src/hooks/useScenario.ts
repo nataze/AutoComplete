@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ScenarioKey } from "../types";
 import { SCENARIOS } from "..";
 
-export function useScenario<T>(scenarioId: ScenarioKey) {
+export function useScenario(scenarioId: ScenarioKey) {
   const scenario = useMemo(
     () => SCENARIOS.find(s => s.id === scenarioId)!,
     [scenarioId]

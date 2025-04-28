@@ -1,4 +1,4 @@
-import { OptionItem, Scenario, ScenarioDef } from "./types";
+import { OptionItem } from "./types";
 
 
 export const labels = {

@@ -61,13 +61,11 @@ export function AutoComplete<T>(props: AutoCompleteProps<T>) {
   const [open, setOpen] = useState(false);
 
   const timer = useRef<number>(undefined);
-  const abortRef = useRef<AbortController>(undefined);
 
   // cleanup on unmount
   useEffect(() => {
     return () => {
       clearTimeout(timer.current);
-      abortRef.current?.abort();
     };
   }, []);
 
@@ -81,7 +79,7 @@ export function AutoComplete<T>(props: AutoCompleteProps<T>) {
     setHasSearched(false);
     if (value === undefined) setInternalQuery('');
     onInputChange?.('')
-  }, [value]);
+  }, [value, onInputChange]);
 
   useEffect(() => {
     clearAll()
@@ -174,7 +172,7 @@ export function AutoComplete<T>(props: AutoCompleteProps<T>) {
         debounceTime
       );
     },
-    [debounceTime, fetchOptions, onInputChange, value]
+    [debounceTime, fetchOptions, onInputChange, value, minChars]
   );
 
   const handleKeyDown = useCallback(
@@ -228,13 +226,13 @@ export function AutoComplete<T>(props: AutoCompleteProps<T>) {
       );
       return (
         <>
-          {iconPosition === 'left' && iconNode}
+          {iconPosition === 'left' && opt.icon && iconNode}
           <div className={`label-${iconPosition}`} title={opt.label}>
             {before}
             {match && <strong>{match}</strong>}
             {after}
           </div>
-          {iconPosition === 'right' && iconNode}
+          {iconPosition === 'right' && opt.icon && iconNode}
         </>
       );
     },

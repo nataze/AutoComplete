@@ -35,7 +35,6 @@ export function AutoCompleteDropdown<T>(props: AutoCompleteDropdownProps<T>) {
       {options.map((opt, idx) => {
         const isActive = idx === activeIndex;
 
-       
         const key =
           typeof opt.value === 'string'
             ? `${opt.value}-${idx}`
