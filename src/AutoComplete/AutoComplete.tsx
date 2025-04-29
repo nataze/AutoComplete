@@ -200,45 +200,6 @@ export function AutoComplete<T>(props: AutoCompleteProps<T>) {
     [activeIndex, handleSelect, moveActive, open, options]
   );
 
-  const defaultRender = useCallback(
-    (opt: OptionItem<T>, isActive: boolean) => {
-      const lowerLabel = opt.label.toLocaleLowerCase();
-      const lowerQuery = query.toLocaleLowerCase();
-      const idx = lowerLabel.indexOf(lowerQuery);
-      const before = idx >= 0 ? opt.label.slice(0, idx) : opt.label;
-      const match = idx >= 0 ? opt.label.slice(idx, idx + query.length) : '';
-      const after = idx >= 0 ? opt.label.slice(idx + query.length) : '';
-      const iconNode = (
-        <div className={`image-container ${iconPosition}`}>
-          {opt.icon && (
-            <span className={`icon ${iconPosition}`} aria-hidden>
-              {opt.icon}
-            </span>
-          )}
-          {opt.imageUrl && (
-            <img
-              src={opt.imageUrl}
-              alt=""
-              className={`image ${iconPosition}`}
-            />
-          )}
-        </div>
-      );
-      return (
-        <>
-          {iconPosition === 'left' && opt.icon && iconNode}
-          <div className={`label-${iconPosition}`} title={opt.label}>
-            {before}
-            {match && <strong>{match}</strong>}
-            {after}
-          </div>
-          {iconPosition === 'right' && opt.icon && iconNode}
-        </>
-      );
-    },
-    [iconPosition, query]
-  );
-
   const onFocusInternal = useCallback(
     (e: FocusEvent<HTMLInputElement>) => {
       onFocus?.(e);
@@ -290,10 +251,12 @@ export function AutoComplete<T>(props: AutoCompleteProps<T>) {
                 options={options}
                 noResultsComponent={noResultsComponent}
                 activeIndex={activeIndex}
-                renderOption={renderOption ?? defaultRender}
+                renderOption={renderOption}
                 handleSelect={handleSelect}
                 itemClassName={itemClassName}
                 hasSearched={hasSearched} 
+                query={query}
+                iconPosition={iconPosition}
               />
             </ul>
           )}

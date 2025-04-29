@@ -12,19 +12,23 @@ code {
     monospace;
 }
 
-.scenario-group {
+.scenario-nav .scenario-group {
   display: flex;
   align-items: center;
   margin-right: 2rem;
 }
 
-.scenario-group .group-label {
+.scenario-nav .scenario-group .group-label {
   margin-right: 0.5rem;
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   color: #666;
   white-space: nowrap;
+}
+
+.scenario-nav .scenario-group .group-label .group-buttons {
+  display: flex;
 }
 
 .scenario-group:not(:last-child)::after {
@@ -41,13 +45,13 @@ code {
   top: 0;
   left: 0;
   width: 100%;
-  height: 72px;             
   padding: 0 16px;
+  min-height: 5rem;
   display: flex;
   align-items: center;
   justify-content: center;   
   background-color: #ffffff;
-  overflow-x: auto;
+  overflow: auto;
   z-index: 1000;
 }
 
@@ -56,14 +60,12 @@ code {
 }
 
 .scenario-btn {
-  margin: 0 8px;             
-  padding: 0 24px;           
-  height: 40px;             
+  margin: 0 0.5rem;             
+  padding: 0.75rem 1.5rem;           
   font-size: 1rem;
   font-weight: 500;
   color: rgba(0, 0, 0, 0.87);
   background-color: #ffffff; 
-  
   border: none;
   border-radius: 8px;      
   cursor: pointer;

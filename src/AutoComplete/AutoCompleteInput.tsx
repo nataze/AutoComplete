@@ -39,7 +39,7 @@ export function AutoCompleteInput<T>(props: AutoCompleteInputProps<T>) {
       <input
         id={inputId}
         className={`autocomplete-input ${inputClassName} ${
-          selectedOption && selectedOption.icon ? `has-icon-${iconPosition}` : ''
+          selectedOption && (selectedOption.icon || selectedOption.imageUrl) ? `has-icon-${iconPosition}` : ''
         }`}
         placeholder={placeholder}
         role="combobox"

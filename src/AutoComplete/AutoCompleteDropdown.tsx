@@ -1,4 +1,5 @@
-import { AutoCompleteDropdownProps } from "../types";
+import { useCallback } from "react";
+import { AutoCompleteDropdownProps, OptionItem } from "../types";
 
 export function AutoCompleteDropdown<T>(props: AutoCompleteDropdownProps<T>) {
   const {
@@ -11,8 +12,49 @@ export function AutoCompleteDropdown<T>(props: AutoCompleteDropdownProps<T>) {
     handleSelect,
     inputId,
     itemClassName,
-    hasSearched
+    hasSearched,
+    query,
+    iconPosition,
   } = props
+
+  const defaultRender = useCallback(
+      (opt: OptionItem<T>, isActive: boolean) => {
+        const lowerLabel = opt.label.toLocaleLowerCase();
+        const lowerQuery = query.toLocaleLowerCase();
+        const idx = lowerLabel.indexOf(lowerQuery);
+        const before = idx >= 0 ? opt.label.slice(0, idx) : opt.label;
+        const match = idx >= 0 ? opt.label.slice(idx, idx + query.length) : '';
+        const after = idx >= 0 ? opt.label.slice(idx + query.length) : '';
+        const iconNode = (
+          <div className={`image-container ${iconPosition}`}>
+            {opt.icon && (
+              <span className={`icon ${iconPosition}`} aria-hidden>
+                {opt.icon}
+              </span>
+            )}
+            {opt.imageUrl && (
+              <img
+                src={opt.imageUrl}
+                alt=""
+                className={`image ${iconPosition}`}
+              />
+            )}
+          </div>
+        );
+        return (
+          <>
+            {iconPosition === 'left' && (opt.icon || opt.imageUrl) && iconNode}
+            <div className={`label-${iconPosition}`} title={opt.label}>
+              {before}
+              {match && <strong>{match}</strong>}
+              {after}
+            </div>
+            {iconPosition === 'right' && (opt.icon || opt.imageUrl) && iconNode}
+          </>
+        );
+      },
+      [iconPosition, query]
+    );
 
   if (loading) {
     return (
@@ -49,7 +91,7 @@ export function AutoCompleteDropdown<T>(props: AutoCompleteDropdownProps<T>) {
             className={isActive ? `active ${itemClassName}` : itemClassName}
             onMouseDown={() => handleSelect(opt)}
           >
-            {renderOption(opt, isActive)}
+            {renderOption ? renderOption(opt, isActive) : defaultRender(opt, isActive)}
           </li>
         );
       })}

@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import { AutoComplete } from './AutoComplete/AutoComplete';
-import { OptionItem, ScenarioDef, ScenarioKey } from './types';
+import { IconPosition, OptionItem, ScenarioDef, ScenarioKey } from './types';
 import { fruitList, labels, languageList, teamList } from './data';
 import { useScenario } from './hooks/useScenario';
 
@@ -48,7 +48,12 @@ export const SCENARIOS: ScenarioDef<any>[] = [
     fetcher: async () => {
       const res = await fetch('https://restcountries.com/v3.1/all');
       // no proper error handling for sample requests
-      if (!res.ok) console.error(`Error ${res.status}`);
+      // since it wasn't core part of component
+      if (!res.ok) {
+        console.error(`Error ${res.status}`);
+        return
+      }
+
       const data = await res.json();
       return data.map((c: any) => ({
         label: c.name.common,
@@ -63,7 +68,11 @@ export const SCENARIOS: ScenarioDef<any>[] = [
     placeholder: 'Search users…',
     fetcher: async () => {
       const res = await fetch('https://dummyjson.com/users');
-      if (!res.ok) console.error(`Error ${res.status}`);
+      if (!res.ok) {
+        console.error(`Error ${res.status}`);
+        return
+      }
+
       const { users } = await res.json();
       return users.map((u: any) => ({
         label: `${u.firstName} ${u.lastName}`,
@@ -76,9 +85,8 @@ export const SCENARIOS: ScenarioDef<any>[] = [
 
 function App() {
   const [scenario, setScenario] = useState<ScenarioKey>('fruits');
-  const [iconPosition, setIconPosition] = useState<'left' | 'right'>('left');
+  const [iconPosition, setIconPosition] = useState<IconPosition>('left');
 
-  // get items + metadata
   const { items, loading, error, placeholder, renderOption } = useScenario(scenario);
 
   // split into groups
@@ -92,7 +100,7 @@ function App() {
   );
 
   const handleToggleIcon = useCallback(() => {
-    setIconPosition(pos => (pos === 'left' ? 'right' : 'left'));
+    setIconPosition((pos: IconPosition) => (pos === 'left' ? 'right' : 'left'));
   }, []);
 
   return (

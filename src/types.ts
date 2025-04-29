@@ -8,6 +8,7 @@ export interface OptionItem<T = any> {
   [key: string]: any;
 }
 
+export type IconPosition = 'left' | 'right';
 
 /**
  * Generic option type for the autocomplete.
@@ -71,7 +72,7 @@ export interface AutoCompleteProps<T> {
   noResultsComponent?: React.ReactNode;
 
   // Icon or image position inside items: 'left' or 'right'
-  iconPosition?: 'left' | 'right';
+  iconPosition?: IconPosition;
 
   // Callback when an option is selected
   onSelect?: (opt: OptionItem<T>) => void;
@@ -94,7 +95,7 @@ export interface Scenario {
 export interface AutoCompleteInputProps<T> {
   open: boolean;
   selectedOption: OptionItem<T> | null;
-  iconPosition: 'left' | 'right';
+  iconPosition: IconPosition;
   inputId?: string;
   inputClassName?: string;
   placeholder?: string;
@@ -114,12 +115,14 @@ export interface AutoCompleteDropdownProps<T> {
   loadingComponent?: React.ReactNode;
   options: OptionItem<T>[];
   noResultsComponent?: React.ReactNode;
-  renderOption: (opt: OptionItem<T>, isActive: boolean) => React.ReactNode;
+  renderOption?: (opt: OptionItem<T>, isActive: boolean) => React.ReactNode;
   activeIndex: number;
   handleSelect: (opt: OptionItem<T>) => void;
   inputId?: string;
   itemClassName?: string;
   hasSearched: boolean;
+  query: string;
+  iconPosition: IconPosition;
 }
 
 export interface ScenarioDef<T> {

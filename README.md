@@ -7,13 +7,10 @@ A flexible, accessible, and high-performance React autocomplete input. It suppor
 ## Features
 
 - **Static or Remote Data**  
-  Pass an `items` array or a `dataSourceUrl` for live fetching.
+  Pass an `items` array
 
 - **Debounce & Throttling**  
   Control requester load with `debounceTime`, `minChars`, and `maxResults`.
-
-- **Race-Safe Fetching**  
-  Uses `AbortController` to cancel stale requests and avoid out-of-order results.
 
 - **Unmount Cleanup**  
   Clears timers and aborts in-flight fetches on unmount.
@@ -22,8 +19,7 @@ A flexible, accessible, and high-performance React autocomplete input. It suppor
   Use `value` + `onInputChange` for controlled forms, or let it manage its own state.
 
 - **Custom Rendering**  
-  - `renderOption(opt, isActive)` to override how each dropdown item renders.  
-  - `loadingComponent` / `noResultsComponent` to swap default messages.
+  - `renderOption(opt, isActive)` to override how each dropdown item renders.
 
 - **Icon & Image Support**  
   Show an emoji/SVG or image on the left or right of each item and the input, with ellipsis & tooltip.
@@ -38,9 +34,9 @@ A flexible, accessible, and high-performance React autocomplete input. It suppor
 ```ts
 interface AutoCompleteProps<T> {
   // Data source
-  items: Array<string | OptionItem<T>>;
+  items: string[] | OptionItem<T>[];
 
-  // Custom function to format options
+  // Custom function to format items
   formatOptions?: (options: any[]) => OptionItem<T>[]
 
   // Controlled mode
@@ -92,7 +88,7 @@ Open http://localhost:3000 in your browser.
 
 ## Scenarios & `index.tsx`
 
-The demo in `index.tsx` lets you switch among five data scenarios—Fruits, Languages, Countries, Users, Teams—via the top nav:
+The demo in `index.tsx` lets you switch among five data scenarios — Fruits, Languages, Countries, Users, Teams via the top nav:
 
 - Click a scenario button to swap the `items` prop or trigger a fetch.  
 - Toggle the switch to flip `iconPosition` between left and right.  
@@ -108,15 +104,11 @@ We use Jest and React Testing Library:
 ```bash
 npm test
 ```
-Tests cover filtering, icon rendering, controlled vs. uncontrolled behavior, fetch loading & retry, keyboard navigation, and custom rendering—without external jest-dom matchers.
+Tests cover filtering, icon rendering, controlled vs. uncontrolled behavior, fetch loading, keyboard navigation, and custom rendering.
 
 
 ## Best Practices & Notes
-
-- Race-safe fetching with `AbortController`.  
-- Clean unmount clears timers & aborts any in-flight request.  
-- Fallbacks for error states and empty results keep the UI predictable.  
+- Fallbacks for error states and empty results keep the UI predictable.
+- Clean unmount clears timers.  
 - ARIA roles & proper labels ensure screen-reader compatibility.  
-- Extensible via `renderOption` and slot props for maximum reuse.  
-
-Feel free to clone, tweak props, or swap in new data sources
+- Extensible via `renderOption` and other props for maximum reuse.
