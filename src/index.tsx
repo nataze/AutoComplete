@@ -46,9 +46,8 @@ export const SCENARIOS: ScenarioDef<any>[] = [
     name: 'Countries',
     placeholder: 'Search countries…',
     fetcher: async () => {
-      const res = await fetch('https://restcountries.com/v3.1/all');
-      // no proper error handling for sample requests
-      // since it wasn't core part of component
+      try {
+        const res = await fetch('https://restcountries.com/v3.1/all');
       if (!res.ok) {
         console.error(`Error ${res.status}`);
         return
@@ -60,6 +59,9 @@ export const SCENARIOS: ScenarioDef<any>[] = [
         value: c.cca2,
         imageUrl: c.flags.png,
       }));
+      } catch (error) {
+        console.error(`Error: ${error}`);
+      }
     },
   },
   {
@@ -67,18 +69,22 @@ export const SCENARIOS: ScenarioDef<any>[] = [
     name: 'Users',
     placeholder: 'Search users…',
     fetcher: async () => {
-      const res = await fetch('https://dummyjson.com/users');
-      if (!res.ok) {
-        console.error(`Error ${res.status}`);
-        return
-      }
+      try {
+        const res = await fetch('https://dummyjson.com/users');
+        if (!res.ok) {
+          console.error(`Error ${res.status}`);
+          return
+        }
 
-      const { users } = await res.json();
-      return users.map((u: any) => ({
-        label: `${u.firstName} ${u.lastName}`,
-        value: u.id,
-        imageUrl: u.image,
-      }));
+        const { users } = await res.json();
+        return users.map((u: any) => ({
+          label: `${u.firstName} ${u.lastName}`,
+          value: u.id,
+          imageUrl: u.image,
+        }));
+      } catch (error) {
+        console.error(`Error: ${error}`);
+      }
     },
   },
 ];
